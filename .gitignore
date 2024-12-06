@@ -1,4 +1,4 @@
 .venv
 uploads
-log
+logs
 __pycache__
