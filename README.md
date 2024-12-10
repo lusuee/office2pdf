@@ -1,7 +1,7 @@
-# Flask Web App Starter
+# office2pdf
 
-A Flask starter template as per [these docs](https://flask.palletsprojects.com/en/3.0.x/quickstart/#a-minimal-application).
+调用本地 office 将文件转为 pdf 并返回
 
-## Getting Started
+## 打包命令
 
-Previews should run automatically when starting a workspace.
+`pyinstaller --onefile --noconsole --name office2pdf main.py`

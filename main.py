@@ -1,12 +1,13 @@
 import os
 import io
 import logging
-from logging.handlers import TimedRotatingFileHandler
 import pythoncom
 import win32com.client as win32
-from werkzeug.utils import secure_filename
-from flask import Flask, send_file, request, jsonify, make_response
 import tempfile
+from logging.handlers import TimedRotatingFileHandler
+from werkzeug.utils import secure_filename
+from flask import Flask, request, jsonify, make_response
+from waitress import serve
 
 
 app = Flask(__name__)
@@ -167,9 +168,9 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def main():
-    app.run(port=int(os.environ.get("PORT", 80)))
-
-
 if __name__ == "__main__":
-    main()
+    logger.info("server starting...")
+    try:
+        serve(app, listen="*:8081")
+    except Exception as e:
+        logger.error(e)
