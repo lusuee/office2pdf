@@ -211,7 +211,7 @@ def upload_file():
 
             response = make_response(pdf_stream.getvalue())
             response.headers["Content-Disposition"] = (
-                f"attachment; filename*=UTF-8''{quote(pdf_filename)}; "
+                f"attachment; filename*=UTF-8''{quote(pdf_filename)}"
             )
             response.headers["Content-Type"] = "application/pdf"
 
