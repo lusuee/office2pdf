@@ -166,14 +166,21 @@ def office_to_pdf_stream(input_stream, filename, app_type):
 
 def get_office_application(app_type):
     """获取线程安全的 Office 应用程序实例"""
-    if not hasattr(thread_local, "office_app"):
+    try:
+        if not hasattr(thread_local, "office_app") or thread_local.office_app is None:
+            raise ValueError("Office application not initialized")
+
+        # 检查应用程序是否仍然可用
+        thread_local.office_app.Visible
+
+    except (pythoncom.com_error, ValueError):
         pythoncom.CoInitialize()
         if app_type == "Word":
-            thread_local.office_app = win32.Dispatch("Word.Application")
+            thread_local.office_app = win32.DispatchEx("Word.Application")
         elif app_type == "Excel":
-            thread_local.office_app = win32.Dispatch("Excel.Application")
+            thread_local.office_app = win32.DispatchEx("Excel.Application")
         elif app_type == "PowerPoint":
-            thread_local.office_app = win32.Dispatch("PowerPoint.Application")
+            thread_local.office_app = win32.DispatchEx("PowerPoint.Application")
         else:
             raise ValueError("Unsupported application type")
 
