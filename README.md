@@ -5,30 +5,25 @@
 ## 环境说明
 
 - `uv` 负责管理 Python 版本、虚拟环境和 Python 包依赖。
-- `uv` 不能把 Windows 专属模块变成跨平台可用，比如 `pywin32`、`win32event` 只能在 Windows Python 下使用。
-- 本项目建议区分两种使用场景：
-  - `main.py` 可在 WSL/Linux 环境下开发和检查代码结构。
-  - `service.py`、`pywin32`、Windows 服务注册与 exe 打包需要在 Windows 环境执行。
 - 运行时配置支持写入 `office2pdf.json`，放在源码目录或 `exe` 同目录即可，不必依赖环境变量。
 
 ## 开发运行
 
-```bash
-/home/linuxbrew/.linuxbrew/bin/uv sync
-/home/linuxbrew/.linuxbrew/bin/uv run python main.py
+```powershell
+uv sync
+uv run python main.py
 ```
 
 说明：
 
-- 在非 Windows 环境下，`uv sync` 不会安装 `pywin32`，这是预期行为。
-- 如果编辑器使用的是 WSL/Linux 解释器，`service.py` 中的 Windows 专属导入可能无法被源码解析，这不影响 `main.py` 的开发。
-- 如果需要让编辑器正确识别 `win32event` 等模块，请把解释器切换到 Windows 虚拟环境，例如 `D:\github\office2pdf\.venv\Scripts\python.exe`。
+- 建议在 Windows PowerShell 中执行以上命令。
+- 如果使用编辑器，请将 Python 解释器切换到 `D:\github\office2pdf\.venv\Scripts\python.exe`。
 
 ## 配置文件
 
 程序会优先读取运行目录下的 `office2pdf.json`：
 
-- 源码运行时：读取项目目录下的 `office2pdf.json`
+- 直接运行源码时：读取项目目录下的 `office2pdf.json`
 - 打包 `exe` 运行时：读取 `exe` 同目录下的 `office2pdf.json`
 
 可以参考 [office2pdf.json.example](/mnt/d/github/office2pdf/office2pdf.json.example)：
