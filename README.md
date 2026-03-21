@@ -6,6 +6,8 @@
 
 - `uv` 负责管理 Python 版本、虚拟环境和 Python 包依赖。
 - 运行时配置支持写入 `office2pdf.json`，放在源码目录或 `exe` 同目录即可，不必依赖环境变量。
+- 本项目当前锁定的 Python 和打包依赖组合已经验证可用，请不要随意升级 `pyinstaller`、`pyinstaller-hooks-contrib`、`pywin32` 或修改 `uv.lock`。
+- 如需升级上述版本，请先在测试环境重新打包并验证后，再更新锁文件。
 
 ## 开发运行
 
@@ -53,66 +55,23 @@ uv run python main.py
 .\build.ps1
 ```
 
-首次在 Windows 环境使用时，建议先执行：
+如果希望把 Visual C++ 运行库安装包一并放入 `dist`，可以执行：
 
 ```powershell
-uv sync --group dev
+.\build.ps1 -VcRedistPath C:\path\to\vc_redist.x64.exe
 ```
-
-如果 `.\build.ps1` 执行报错，可按下面排查：
-
-1. 确认在 Windows PowerShell 中可以直接执行 `uv --version`。
-2. 如果出现 `无法加载文件 .\build.ps1，因为在此系统上禁止运行脚本`，说明 PowerShell 执行策略阻止了 `.ps1` 脚本。
-3. 可先在当前 PowerShell 会话临时放行脚本执行：
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\build.ps1
-```
-
-4. 如果希望长期对当前用户生效，可执行：
-
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-```
-
-然后重新打开 PowerShell，再执行：
-
-```powershell
-.\build.ps1
-```
-
-5. 如果出现脚本语法错误，或者错误信息里有乱码、`字符串缺少终止符`、`UnexpectedToken`，请先同步最新版 `build.ps1`。旧脚本可能存在 here-string 或文件编码问题。
-6. 如果出现类似 `No Python at ...Python312\python.exe` 或 `Querying Python at .venv\Scripts\python.exe failed`，说明现有 `.venv` 仍然绑定旧 Python。
-7. 删除旧虚拟环境并重新安装依赖：
-
-```powershell
-Remove-Item -Recurse -Force .venv
-uv sync --group dev
-```
-
-8. 然后重新执行：
-
-```powershell
-.\build.ps1
-```
-
-常见原因：
-
-- PowerShell 执行策略禁止运行 `.ps1`
-- 使用了旧版本 `build.ps1`，其中包含 PowerShell here-string 语法问题
-- 当前 PowerShell 里找不到 `uv`
-- `.venv` 仍然指向已删除的旧 Python 安装
-- 没有先在 Windows 环境完成 `uv sync --group dev`
 
 输出文件：
 
 - `dist/office2pdf.exe`
+- `dist/office2pdf-dir\`
 - `dist/office2pdf-service.exe`
+- `dist\vc_redist.x64.exe`（仅在传入 `-VcRedistPath` 时生成）
 
 打包后的运行目录说明：
 
 - 单文件 `exe` 运行时，PyInstaller 会使用临时解包目录，但本项目的默认日志和上传目录会按 `exe` 所在目录计算。
+- 目录版 `dist\office2pdf-dir\` 运行时不会使用 PyInstaller 的临时解包目录，更适合在老系统上排查运行库问题。
 - 如果未设置环境变量，默认目录如下：
   - 日志目录：`<exe所在目录>\logs`
   - 上传目录：`<exe所在目录>\uploads`

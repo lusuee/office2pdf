@@ -3,6 +3,7 @@ import io
 import json
 import logging
 import os
+import re
 import sys
 import threading
 import uuid
@@ -15,8 +16,6 @@ import win32com.client as win32
 from flask import Flask, request, jsonify, make_response
 from waitress import create_server, serve
 from werkzeug.exceptions import BadRequest, ClientDisconnected, RequestEntityTooLarge
-from werkzeug.utils import secure_filename
-
 app = Flask(__name__)
 app.name = "office2pdf"
 
@@ -179,12 +178,15 @@ logger = create_logger()
 
 
 def get_safe_filename(filename: str) -> str:
-    """Return a secure, unique filename based on the original name."""
+    """Return a unique filename while preserving Unicode characters."""
     _, ext = os.path.splitext(filename)
-    safe_stem = secure_filename(os.path.splitext(filename)[0]).strip("._")
-    safe_ext = secure_filename(ext).lower()
+    stem = os.path.splitext(filename)[0].strip()
 
-    if not safe_ext.startswith(".") and safe_ext:
+    # Remove Windows-invalid filename characters but keep Unicode text.
+    safe_stem = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", stem).rstrip(" .")
+    safe_ext = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", ext).strip().lower()
+
+    if safe_ext and not safe_ext.startswith("."):
         safe_ext = f".{safe_ext}"
 
     if not safe_ext:

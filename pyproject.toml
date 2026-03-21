@@ -3,18 +3,18 @@ name = "office2pdf"
 version = "0.2.1"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12,<3.13"
 dependencies = [
-    "colorama>=0.4.6",
-    "flask>=3.1.2",
-    "pywin32>=311; sys_platform == 'win32'",
-    "waitress>=3.0.2",
+    "colorama==0.4.6",
+    "flask==3.1.0",
+    "pywin32==308; sys_platform == 'win32'",
+    "waitress==3.0.2",
 ]
 
 [dependency-groups]
 dev = [
-    "autopep8>=2.3.2",
-    "pycodestyle>=2.14.0",
-    "pyinstaller>=6.18.0",
-    "pyinstaller-hooks-contrib>=2026.0",
+    "autopep8==2.3.1",
+    "pycodestyle==2.12.1",
+    "pyinstaller==6.11.1",
+    "pyinstaller-hooks-contrib==2024.10",
 ]
